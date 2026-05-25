@@ -7,6 +7,8 @@ EEE is a fully local preview-environment platform for Kubernetes workloads. It p
 - a LocalStack container for free local AWS-compatible services
 - a mono-repo layout for Terraform, Kubernetes, automation scripts, and CI
 - Terragrunt-managed, PR-isolated LocalStack infrastructure state
+- Helm-based preview application deployment
+- ArgoCD ApplicationSet automation for PR-scoped environments
 
 ## Prerequisites
 
@@ -18,6 +20,8 @@ Install these tools locally:
 - Docker Compose
 - Terraform
 - Terragrunt
+- Helm
+- ArgoCD CLI, optional for UI/login workflows
 
 ## Start LocalStack
 
@@ -25,9 +29,10 @@ Install these tools locally:
 docker compose up -d localstack
 ```
 
-LocalStack is exposed only on loopback:
+LocalStack is exposed on the local Docker host:
 
-- edge endpoint: `http://localhost:4566`
+- host endpoint: `http://localhost:4566`
+- in-cluster endpoint: `http://eee-localstack.default.svc.cluster.local:4566`
 - enabled services: S3, DynamoDB, SQS, IAM
 
 ## Create The K3d Cluster
@@ -85,6 +90,22 @@ Destroy only that PR's resources:
 ```sh
 cd terraform/live/pr/42
 terragrunt destroy
+```
+
+## Bootstrap Preview Deployments
+
+Install ArgoCD into the local K3d cluster and apply EEE's preview environment controllers:
+
+```sh
+./scripts/bootstrap-argocd.sh
+```
+
+The ApplicationSet watches GitHub pull requests from `pr/<number>` branches and creates an ArgoCD Application in an isolated namespace named `env-pr-<number>`.
+
+Preview workloads are deployed from:
+
+```text
+kubernetes/charts/eee-preview-app
 ```
 
 ## Local DNS

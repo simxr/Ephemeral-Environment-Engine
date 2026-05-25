@@ -1,0 +1,58 @@
+replicaCount: 1
+
+prNumber: "42"
+environmentName: env-pr-42
+
+image:
+  repository: hashicorp/http-echo
+  pullPolicy: IfNotPresent
+  tag: "1.0.0"
+
+serviceAccount:
+  create: true
+  name: ""
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 10001
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations: {}
+  tls: []
+
+aws:
+  region: us-east-1
+  endpointUrl: http://eee-localstack.default.svc.cluster.local:4566
+  s3Bucket: env-pr-42-local-app-data
+  dynamoTable: env-pr-42-local-app-state
+  sqsQueueUrl: http://eee-localstack.default.svc.cluster.local:4566/000000000000/env-pr-42-local-events
+  accessKeyId: test
+  secretAccessKey: test
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

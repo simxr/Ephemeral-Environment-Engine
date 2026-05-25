@@ -1,0 +1,6 @@
+apiVersion: v2
+name: eee-preview-app
+description: Mock microservice chart for EEE preview environments.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "eee-preview-app.fullname" . }}-config
+  labels:
+    {{- include "eee-preview-app.labels" . | nindent 4 }}
+data:
+  ENVIRONMENT_NAME: {{ .Values.environmentName | quote }}
+  PR_NUMBER: {{ .Values.prNumber | quote }}
+  AWS_REGION: {{ .Values.aws.region | quote }}
+  AWS_ENDPOINT_URL: {{ .Values.aws.endpointUrl | quote }}
+  AWS_S3_BUCKET: {{ .Values.aws.s3Bucket | quote }}
+  AWS_DYNAMODB_TABLE: {{ .Values.aws.dynamoTable | quote }}
+  AWS_SQS_QUEUE_URL: {{ .Values.aws.sqsQueueUrl | quote }}

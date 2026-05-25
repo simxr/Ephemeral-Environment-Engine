@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: eee-preview-prs
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - pullRequest:
+        github:
+          owner: simxr
+          repo: Ephemeral-Environment-Engine
+        requeueAfterSeconds: 180
+        filters:
+          - branchMatch: "^pr/[0-9]+$"
+  template:
+    metadata:
+      name: 'env-pr-{{ .number }}'
+      labels:
+        app.kubernetes.io/part-of: eee
+        eee.io/environment: 'env-pr-{{ .number }}'
+        eee.io/pr-number: '{{ .number }}'
+    spec:
+      project: eee-preview-environments
+      source:
+        repoURL: https://github.com/simxr/Ephemeral-Environment-Engine.git
+        targetRevision: '{{ .head_sha }}'
+        path: kubernetes/charts/eee-preview-app
+        helm:
+          releaseName: 'env-pr-{{ .number }}'
+          parameters:
+            - name: prNumber
+              value: '{{ .number }}'
+            - name: environmentName
+              value: 'env-pr-{{ .number }}'
+            - name: aws.s3Bucket
+              value: 'env-pr-{{ .number }}-local-app-data'
+            - name: aws.dynamoTable
+              value: 'env-pr-{{ .number }}-local-app-state'
+            - name: aws.sqsQueueUrl
+              value: 'http://eee-localstack.default.svc.cluster.local:4566/000000000000/env-pr-{{ .number }}-local-events'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'env-pr-{{ .number }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
