@@ -45,6 +45,24 @@ aws:
   accessKeyId: test
   secretAccessKey: test
 
+seeder:
+  enabled: true
+  image:
+    repository: public.ecr.aws/aws-cli/aws-cli
+    tag: "2.15.40"
+    pullPolicy: IfNotPresent
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 2
+  activeDeadlineSeconds: 180
+  dataset:
+    products:
+      - id: demo-widget
+        name: Demo Widget
+        price: "19.99"
+      - id: preview-plan
+        name: Preview Plan
+        price: "0.00"
+
 resources:
   requests:
     cpu: 25m

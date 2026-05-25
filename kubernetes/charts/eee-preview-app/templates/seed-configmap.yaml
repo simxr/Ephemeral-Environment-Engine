@@ -1,0 +1,34 @@
+{{- if .Values.seeder.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "eee-preview-app.fullname" . }}-seed
+  labels:
+    {{- include "eee-preview-app.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  products.json: |
+    {{- toPrettyJson .Values.seeder.dataset.products | nindent 4 }}
+  dynamodb-batch.json: |
+    {
+      "{{ .Values.aws.dynamoTable }}": [
+        {{- range $index, $product := .Values.seeder.dataset.products }}
+        {{- if $index }},{{ end }}
+        {
+          "PutRequest": {
+            "Item": {
+              "pk": { "S": "product" },
+              "sk": { "S": {{ $product.id | quote }} },
+              "name": { "S": {{ $product.name | quote }} },
+              "price": { "N": {{ $product.price | quote }} },
+              "environment": { "S": {{ $.Values.environmentName | quote }} }
+            }
+          }
+        }
+        {{- end }}
+      ]
+    }
+{{- end }}

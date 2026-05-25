@@ -36,3 +36,5 @@ helm template env-pr-42 kubernetes/charts/eee-preview-app \
 ```
 
 The chart injects LocalStack settings into the workload and creates an ingress host at `pr42.local.dev`.
+
+The chart also runs a post-install/post-upgrade seed Job. It writes sample data into the PR-specific S3 bucket and DynamoDB table, overwriting the same keys safely on repeated syncs. Finished seed Jobs are cleaned up by Kubernetes using `ttlSecondsAfterFinished`.
