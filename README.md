@@ -108,6 +108,28 @@ Preview workloads are deployed from:
 kubernetes/charts/eee-preview-app
 ```
 
+## Clean Up Stale Environments
+
+Run the Janitor in dry-run mode:
+
+```sh
+python scripts/janitor.py
+```
+
+Delete stale namespaces and destroy their matching LocalStack infrastructure:
+
+```sh
+python scripts/janitor.py --apply
+```
+
+On Windows PowerShell:
+
+```powershell
+.\scripts\run-janitor.ps1 -Apply
+```
+
+The Janitor targets namespaces named `env-pr-<number>`. It removes environments when the matching GitHub PR is closed, merged, missing, or when the namespace is older than 24 hours. Set `GITHUB_TOKEN` or `GH_TOKEN` to avoid unauthenticated GitHub API limits.
+
 ## Local DNS
 
 Preview environments use per-PR hostnames such as:
