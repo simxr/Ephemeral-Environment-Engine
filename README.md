@@ -10,9 +10,31 @@ EEE is a fully local preview-environment platform for Kubernetes workloads. It p
 - Helm-based preview application deployment
 - ArgoCD ApplicationSet automation for PR-scoped environments
 
-## Prerequisites
+## Devcontainer
 
-Install these tools locally:
+The recommended development path is the included devcontainer. It installs the project toolchain inside a reproducible Linux environment and connects to the host Docker engine.
+
+Host requirements:
+
+- Docker Desktop or Docker Engine
+
+Open the repository in VS Code or GitHub Codespaces and choose **Reopen in Container**. The container includes:
+
+- Docker CLI and Docker Compose
+- k3d
+- kubectl
+- Terraform
+- Terragrunt
+- Helm
+- ArgoCD CLI
+- GitHub CLI
+- Python 3
+
+The host still needs Docker because K3d and LocalStack run as Docker containers.
+
+## Local Prerequisites
+
+If you are not using the devcontainer, install these tools locally:
 
 - Docker Desktop or Docker Engine
 - k3d
@@ -22,6 +44,7 @@ Install these tools locally:
 - Terragrunt
 - Helm
 - ArgoCD CLI, optional for UI/login workflows
+- Python 3
 
 ## Start LocalStack
 

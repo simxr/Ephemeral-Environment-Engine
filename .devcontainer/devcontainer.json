@@ -1,0 +1,64 @@
+{
+  "name": "Ephemeral Environment Engine",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.eol": "\n",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "containerEnv": {
+    "KUBECONFIG": "/home/vscode/.kube/config",
+    "AWS_ACCESS_KEY_ID": "test",
+    "AWS_SECRET_ACCESS_KEY": "test",
+    "AWS_DEFAULT_REGION": "us-east-1",
+    "LOCALSTACK_ENDPOINT": "http://localhost:4566"
+  },
+  "mounts": [
+    "source=eee-kube,target=/home/vscode/.kube,type=volume"
+  ],
+  "forwardPorts": [
+    80,
+    443,
+    4566,
+    8080
+  ],
+  "portsAttributes": {
+    "80": {
+      "label": "Traefik HTTP"
+    },
+    "443": {
+      "label": "Traefik HTTPS"
+    },
+    "4566": {
+      "label": "LocalStack"
+    },
+    "8080": {
+      "label": "ArgoCD UI"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh"
+}
