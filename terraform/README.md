@@ -1,6 +1,6 @@
 # Terraform And Terragrunt
 
-Milestone 2 provisions local AWS-compatible resources in LocalStack with Terraform and Terragrunt.
+Terraform and Terragrunt provision local AWS-compatible resources in LocalStack.
 
 The live layout is intentionally PR-scoped:
 

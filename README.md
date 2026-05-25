@@ -1,6 +1,6 @@
 # Ephemeral Environment Engine
 
-EEE is a fully local preview-environment platform for Kubernetes workloads. The current foundation includes:
+EEE is a fully local preview-environment platform for Kubernetes workloads. It provides:
 
 - a local K3d cluster with Traefik ingress enabled
 - localhost port forwarding for HTTP and HTTPS
@@ -47,7 +47,7 @@ You can override defaults:
 CLUSTER_NAME=eee AGENTS=2 HTTP_PORT=80 HTTPS_PORT=443 ./scripts/create-k3d-cluster.sh
 ```
 
-## Validate The Foundation
+## Validate The Local Platform
 
 ```sh
 kubectl get nodes
@@ -57,7 +57,7 @@ docker compose ps
 
 ## Provision LocalStack Infrastructure
 
-Milestone 2 adds Terraform and Terragrunt for mock AWS resources. Each PR environment lives in its own directory under `terraform/live/pr/<PR_NUMBER>` and writes isolated state to `terraform/.state/pr/<PR_NUMBER>/terraform.tfstate`.
+Terraform and Terragrunt manage mock AWS resources for each preview environment. Each PR environment lives in its own directory under `terraform/live/pr/<PR_NUMBER>` and writes isolated state to `terraform/.state/pr/<PR_NUMBER>/terraform.tfstate`.
 
 Example for PR #42:
 
@@ -89,7 +89,7 @@ terragrunt destroy
 
 ## Local DNS
 
-Future milestones will use per-PR hostnames such as:
+Preview environments use per-PR hostnames such as:
 
 ```text
 pr42.local.dev
