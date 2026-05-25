@@ -16,3 +16,7 @@ terraform/.state/
 Thumbs.db
 .idea/
 .vscode/
+
+# Python generated files
+__pycache__/
+*.pyc

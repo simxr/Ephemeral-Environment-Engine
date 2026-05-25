@@ -1,0 +1,36 @@
+name: AI Governance
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "kubernetes/**"
+      - "terraform/**"
+      - "scripts/ai_reviewer.py"
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Governance review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          python scripts/ai_reviewer.py \
+            --base origin/${{ github.base_ref }} \
+            --head HEAD \
+            --provider "${AI_REVIEW_PROVIDER:-static}" \
+            --comment

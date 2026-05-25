@@ -1,0 +1,16 @@
+{
+  "quiet_hours": [
+    {
+      "days": ["Friday", "Saturday", "Sunday"],
+      "start": "19:00",
+      "timezone": "Asia/Kolkata"
+    }
+  ],
+  "restore_window": {
+    "day": "Monday",
+    "start": "08:00",
+    "end": "12:00",
+    "timezone": "Asia/Kolkata"
+  },
+  "notes": "Local preview environments are usually idle outside weekday working hours."
+}

@@ -130,6 +130,32 @@ On Windows PowerShell:
 
 The Janitor targets namespaces named `env-pr-<number>`. It removes environments when the matching GitHub PR is closed, merged, missing, or when the namespace is older than 24 hours. Set `GITHUB_TOKEN` or `GH_TOKEN` to avoid unauthenticated GitHub API limits.
 
+The Janitor can also apply smart scaling policy for quiet periods:
+
+```sh
+python scripts/janitor.py --smart-scale --apply
+```
+
+By default, previews scale to zero after 7 PM Friday and through the weekend, then restore on Monday morning. Original replica counts are stored on each Deployment before scale-down.
+
+To let a local Ollama model evaluate usage context before falling back to the built-in policy:
+
+```sh
+EEE_SCALER_PROVIDER=ollama python scripts/janitor.py --smart-scale --usage-file scripts/usage-patterns.example.json
+```
+
+## Governance
+
+Pull requests that touch Kubernetes or Terraform files run the EEE governance reviewer. The reviewer blocks high-risk changes such as root containers, privileged pods, hostPath mounts, wildcard IAM policies, and open security group CIDRs.
+
+Run it locally:
+
+```sh
+python scripts/ai_reviewer.py --base origin/main --head HEAD
+```
+
+Set `AI_REVIEW_PROVIDER=ollama` or `AI_REVIEW_PROVIDER=openai` to add an LLM pass on top of deterministic static checks. Static checks remain the deployment gate.
+
 ## Local DNS
 
 Preview environments use per-PR hostnames such as:
