@@ -1,11 +1,12 @@
 # Ephemeral Environment Engine
 
-EEE is a fully local preview-environment platform for Kubernetes workloads. Milestone 1 creates the foundation:
+EEE is a fully local preview-environment platform for Kubernetes workloads. The current foundation includes:
 
 - a local K3d cluster with Traefik ingress enabled
 - localhost port forwarding for HTTP and HTTPS
 - a LocalStack container for free local AWS-compatible services
 - a mono-repo layout for Terraform, Kubernetes, automation scripts, and CI
+- Terragrunt-managed, PR-isolated LocalStack infrastructure state
 
 ## Prerequisites
 
@@ -15,6 +16,8 @@ Install these tools locally:
 - k3d
 - kubectl
 - Docker Compose
+- Terraform
+- Terragrunt
 
 ## Start LocalStack
 
@@ -50,6 +53,38 @@ CLUSTER_NAME=eee AGENTS=2 HTTP_PORT=80 HTTPS_PORT=443 ./scripts/create-k3d-clust
 kubectl get nodes
 kubectl get pods -A
 docker compose ps
+```
+
+## Provision LocalStack Infrastructure
+
+Milestone 2 adds Terraform and Terragrunt for mock AWS resources. Each PR environment lives in its own directory under `terraform/live/pr/<PR_NUMBER>` and writes isolated state to `terraform/.state/pr/<PR_NUMBER>/terraform.tfstate`.
+
+Example for PR #42:
+
+```sh
+cd terraform/live/pr/42
+terragrunt init
+terragrunt apply
+```
+
+Create another PR environment directory with:
+
+```sh
+./scripts/create-terraform-env.sh 43
+```
+
+This provisions local-only resources in LocalStack:
+
+- S3 bucket for app data
+- DynamoDB table for app state
+- SQS queue for events
+- least-privilege IAM policy mock for those resources
+
+Destroy only that PR's resources:
+
+```sh
+cd terraform/live/pr/42
+terragrunt destroy
 ```
 
 ## Local DNS
